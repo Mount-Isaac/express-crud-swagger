@@ -1,14 +1,11 @@
-let posts = [
-    {id:0, Title: "Post one"},
-    {id:1, Title: "Post Two"},
-    {id:2, Title: "Post Three"},
-    {id:3, Title: "Post Four"},
-    {id:4, Title: "Post Five"},
-]
+import { Post } from "../models/posts.js"
+import { validatePost } from "../middleware/validateMiddleware.js";
 
 // get all posts
-export const getPosts =  (req, res)=>{
+export const getPosts =  async(req, res)=>{
     const limit = parseInt(req.query.limit)
+    const posts = await Post.findAll();
+
     if(!isNaN(limit) && limit > 0){
         return res.status(200).json(posts.slice(0,limit))
     } 
@@ -16,24 +13,19 @@ export const getPosts =  (req, res)=>{
 }
 
 // Create a post
-export const createPost = (req,res,next)=>{
+export const createPost = async(req,res,next)=>{
     const data = req.body
     if(!data){
         const error = new Error('JSON format expected')
         error.status = 400
         return next(error)
     }
-    if (!data.Title){
-        const error = new Error('Title is required!')
+    if (!data.title){
+        const error = new Error('title is required!')
         error.status = 400
         return next(error)
     }
-    const next_id = posts.length + 1
-    const post = {
-        id: next_id,
-        Title: data.Title
-    }
-    posts.push(post)
+    const post = await Post.create(data)
     res.status(201).json(post)
 }
 
@@ -57,43 +49,49 @@ export const getPostById = (req,res)=>{
 }
 
 // update post by id
-export const updatePost = (req,res)=>{
+export const updatePost = async(req,res, next)=>{
     const id = parseInt(req.params.id)
-    const post = posts.find(post=>post.id === id)
     const data = req.body
 
+    const post = await Post.findOne({ where: { id }})
     if (!post){
-        return res.status(404).json(
+        const error = new Error("Post not found")
+        error.status = 404
+        return next(error)
+    }
+
+    if (post.title === data.title){
+        return res.status(200).json(
             {
-                success: false,
-                message: `Post with id ${id} does not exist!`
+                success: true,
+                message: "No changes applied",
+                data: post
             }
         )
     }
-    posts[id].Title = data?.Title ? data.Title : post.Title
+    post.title = data.title
+    await post.save()
+
     res.status(200).json({
-        data: posts,
+        data: post,
         success: true
     })
 }
 
 // delete post by id
-export const deletePost =  (req,res)=>{
+export const deletePost =  async(req,res, next)=>{
     const id = parseInt(req.params.id)
-    const post = posts.find(post=>post.id === id)
-    const data = req.body
 
+    const post = await Post.findOne({ where: { id }})
     if (!post){
-        return res.status(404).json(
-            {
-                success: false,
-                message: `Post with id ${id} does not exist!`
-            }
-        )
+        const error = new Error("Post not found")
+        error.status = 404
+        return next(error)
     }
-    posts = posts.filter((post) =>(post.id !== id))
+
+    await post.destroy()
     res.status(200).json({
-        data: posts,
+        message: "Post deleted successfully!",
         success: true
     })
 }

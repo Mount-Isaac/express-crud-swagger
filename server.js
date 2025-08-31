@@ -5,6 +5,7 @@ import { errorHandler } from './middleware/error.js';
 import { notFound } from './middleware/notFound.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express'
+import { sequelize } from './models/index.js';
 
 const port = process.env.PORT || 8000
 const app = express();
@@ -43,4 +44,13 @@ app.use('/api/posts', posts)
 app.use(notFound)
 app.use(errorHandler)
 
-app.listen(port, ()=>{console.log("server is running")})
+// server:DB mount-running
+sequelize.authenticate()
+    .then(()=>{
+        console.log("Database connection established successfully!");
+        return sequelize.sync(); //creates tables if not exists
+    })
+    .then(()=>{
+        app.listen(port, ()=>{console.log(`server is running on ${port}`)})
+    })
+    .catch(err => console.error("Database connection failed:", err))

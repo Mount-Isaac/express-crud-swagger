@@ -6,6 +6,7 @@ import {
     updatePost,
     deletePost,
 } from '../controllers/postsController.js'
+import { validatePost } from '../middleware/validateMiddleware.js'
 
 const router = express.Router()
 
@@ -34,7 +35,7 @@ router.get('/', getPosts)
  *           schema:
  *             type: object
  *             properties:
- *               Title:
+ *               title:
  *                 type: string
  *     responses:
  *       201:
@@ -83,7 +84,7 @@ router.get('/:id', getPostById)
  *      404: 
  *          description: Post not found
  */
-router.put('/:id', updatePost)
+router.put('/:id', validatePost, updatePost)
 
 /**
  * @swagger
