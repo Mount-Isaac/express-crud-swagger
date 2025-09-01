@@ -7,6 +7,7 @@ import {
     deletePost,
 } from '../controllers/postsController.js'
 import { validatePost } from '../middleware/validateMiddleware.js'
+import { protect } from '../middleware/auth.js'
 
 const router = express.Router()
 
@@ -41,7 +42,7 @@ router.get('/', getPosts)
  *       201:
  *         description: The created post
  */
-router.post('/', createPost)
+router.post('/', protect, createPost)
 
 
 /**
@@ -84,7 +85,7 @@ router.get('/:id', getPostById)
  *      404: 
  *          description: Post not found
  */
-router.put('/:id', validatePost, updatePost)
+router.put('/:id', [validatePost, protect], updatePost)
 
 /**
  * @swagger
@@ -105,6 +106,6 @@ router.put('/:id', validatePost, updatePost)
  *      404: 
  *          description: Post not found
  */
-router.delete('/:id', deletePost)
+router.delete('/:id', protect, deletePost)
 
 export default router

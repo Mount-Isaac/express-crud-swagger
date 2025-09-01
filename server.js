@@ -1,11 +1,12 @@
 import express from 'express'
-import posts from './routes/posts.js'
+import postRoutes from './routes/posts.js'
+import authRoutes from './routes/auth.js'
 import { logger } from './middleware/logger.js';
 import { errorHandler } from './middleware/error.js';
 import { notFound } from './middleware/notFound.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express'
-import { sequelize } from './models/index.js';
+import { sequelize } from './config/db.js';
 
 const port = process.env.PORT || 8000
 const app = express();
@@ -38,7 +39,9 @@ app.post('/', (req,res)=>{
 app.use(logger)
 
 // routes
-app.use('/api/posts', posts)
+app.use('/api/posts', postRoutes)
+
+app.use('/api/auth', authRoutes)
 
 // error middleware
 app.use(notFound)

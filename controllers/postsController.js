@@ -1,5 +1,5 @@
 import { Post } from "../models/posts.js"
-import { validatePost } from "../middleware/validateMiddleware.js";
+// import { validatePost } from "../middleware/validateMiddleware.js";
 
 // get all posts
 export const getPosts =  async(req, res)=>{
