@@ -3,8 +3,9 @@ import {
     getPosts,
     getPostById,
     createPost,
-    updatePost,
     deletePost,
+    updateWholePost,
+    updatePostTitle,
 } from '../controllers/postsController.js'
 import { validatePost } from '../middleware/validateMiddleware.js'
 import { protect } from '../middleware/auth.js'
@@ -69,8 +70,8 @@ router.get('/:id', getPostById)
 /**
  * @swagger
  * /api/posts/{id}:
- *  put:
- *   summary: update a post by id
+ *  patch:
+ *   summary: update the title of a post
  *   parameters:
  *     - in: path
  *       name: id
@@ -85,7 +86,28 @@ router.get('/:id', getPostById)
  *      404: 
  *          description: Post not found
  */
-router.put('/:id', [validatePost, protect], updatePost)
+router.patch('/:id', [validatePost, protect], updatePostTitle)
+
+/**
+ * @swagger
+ * /api/posts/{id}:
+ *  put:
+ *   summary: update a post
+ *   parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       schema:
+ *         type: integer
+ *   responses:
+ *      200:
+ *          description: list of posts after update
+ *      400:
+ *          description: Error occurred
+ *      404: 
+ *          description: Post not found
+ */
+router.put('/:id', [validatePost, protect], updateWholePost)
 
 /**
  * @swagger

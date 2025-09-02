@@ -9,6 +9,7 @@ export const protect = async(req,res,next) => {
         err.status = 401;
         return next(err)
     }
+    console.log(`Cookies: ${req.cookies['csrftoken']}`)
     const token = authHeader.split(" ")[1] 
     if (!token){
         return res.status(401).json( { message: "Authorization token is missing!"} )
@@ -18,7 +19,7 @@ export const protect = async(req,res,next) => {
     try{
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded; // add user info in request
-        next()
+        next();
     }catch(err){
         res.status(401).json({ message: "Invalid authorization token!"})
     }

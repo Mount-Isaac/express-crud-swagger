@@ -49,7 +49,7 @@ export const getPostById = (req,res)=>{
 }
 
 // update post by id
-export const updatePost = async(req,res, next)=>{
+export const updatePostTitle = async(req,res, next)=>{
     const id = parseInt(req.params.id)
     const data = req.body
 
@@ -70,6 +70,36 @@ export const updatePost = async(req,res, next)=>{
         )
     }
     post.title = data.title
+    await post.save()
+
+    res.status(200).json({
+        data: post,
+        success: true
+    })
+}
+export const updateWholePost = async(req,res, next)=>{
+    const id = parseInt(req.params.id)
+    const data = req.body
+    console.log("description", data.description)
+
+    const post = await Post.findOne({ where: { id }})
+    if (!post){
+        const error = new Error("Post not found")
+        error.status = 404
+        return next(error)
+    }
+
+    // if (post.title === data.title){
+    //     return res.status(200).json(
+    //         {
+    //             success: true,
+    //             message: "No changes applied",
+    //             data: post
+    //         }
+    //     )
+    // }
+    post.title = data.title
+    post.description = data?.description ? data.description : post.description
     await post.save()
 
     res.status(200).json({

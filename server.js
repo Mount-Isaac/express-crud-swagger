@@ -7,8 +7,9 @@ import { notFound } from './middleware/notFound.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express'
 import { sequelize } from './config/db.js';
+import cookieParser from 'cookie-parser';
 
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 9000
 const app = express();
 
 const options = {
@@ -24,6 +25,7 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec))
 // body parser middleware
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.use(cookieParser())
 
 // base route
 const welcomeMessage = "Hi, welcome.\nExpressJS app for Learning. Enjoy our APIs via /docs"
