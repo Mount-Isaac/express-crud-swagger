@@ -4,11 +4,16 @@ import { Post } from "../models/posts.js"
 // get all posts
 export const getPosts =  async(req, res)=>{
     const limit = parseInt(req.query.limit)
-    const posts = await Post.findAll();
+    // const posts = await Post.findAll();
 
-    if(!isNaN(limit) && limit > 0){
-        return res.status(200).json(posts.slice(0,limit))
-    } 
+    // applies if limit is applied
+    const posts = await Post.findAll({
+        ...(limit && limit > 0 ? { limit }: {})
+    });
+
+    // if(!isNaN(limit) && limit > 0){
+    //     return res.status(200).json(posts.slice(0,limit))
+    // } 
     res.status(200).json(posts)
 }
 
