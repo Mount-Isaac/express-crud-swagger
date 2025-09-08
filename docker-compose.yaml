@@ -1,0 +1,14 @@
+services:
+  blog-apis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blog-apis
+    ports:
+     - "9000:9000"
+    network_mode: host
+    volumes:
+    - .:/usr/src/app
+    - /usr/src/app/node_modules
+    env_file: ./.env
+    command: npm run dev
